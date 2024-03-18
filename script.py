@@ -1,29 +1,15 @@
-#!/usr/bin/python3
 from ldap3 import Server, Connection, ALL
 
-server_address = 'ldap://cleanergyo.local'  # Adjust the LDAP server address accordingly
-username = 'adminsys'
+server_address = 'ldap://ldap.cleanergyo.local:389'
+username = 'CN=adminsys,OU=Users,DC=cleanergyo,DC=local'
 password = 'BtsSio15'
-user_cn = 'users'
 
-# Establish connection to the LDAP server
 server = Server(server_address, get_info=ALL)
 conn = Connection(server, user=username, password=password)
 
 if not conn.bind():
     print("Failed to bind to LDAP server:", conn.result)
-    exit(1)
+else:
+    print("Successfully connected to LDAP server")
 
-# Search for the user by CN
-conn.search(search_base='DC=cleanergyo,DC=local',
-            search_filter='(cn={})'.format(user_cn),
-            search_scope='SUBTREE')
-
-if len(conn.entries) == 0:
-    print("User not found.")
-    exit(1)
-
-user_entry = conn.entries[0]
-
-# Process user_entry as needed
-print("User Found:", user_entry.entry_dn)
+conn.unbind()
